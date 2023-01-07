@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using Exiled.API.Interfaces;
 
 namespace BanHammer
@@ -9,7 +10,7 @@ namespace BanHammer
 
         public bool Debug { get; set; } = false;
 
-        [Description("Different ban durations for the hammer. In minutes.")]
+        [Description("Different ban durations for the hammer to use with a custom reason (using .bh setreason). In minutes.")]
         public long[] BanDurations { get; set; } =
         {
             0,
@@ -31,5 +32,19 @@ namespace BanHammer
             525600,
             26280000
         };
+        
+        [Description("Predefined reasons")]
+        public Dictionary<long, string> PredefinedReasons { get; set; } = new()
+        {
+            {800, "TeamKilling"},
+        };
+
+        public bool ShouldSendBanBroadcast { get; set; } = true;
+        
+        public string BanBroadcast { get; set; } = "%player% has been banned by the Ban Hammer for %duration% with reason: %reason%.";
+
+        public ushort BroadcastDuration { get; set; } = 6;
+
+        public BanHammerItem Item { get; set; } = new();
     }
 }

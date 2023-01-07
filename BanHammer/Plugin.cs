@@ -1,6 +1,8 @@
 ﻿using System;
 using Exiled.API.Features;
 using Exiled.API.Interfaces;
+using Exiled.CustomItems.API;
+using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
 using InventorySystem.Items.Jailbird;
 
@@ -15,20 +17,24 @@ namespace BanHammer
         public Version Version { get; } = new Version(1, 0, 0);
 
         public static Plugin Singleton;
-        
-        private EventHandlers _eventHandlers;
+
+        public Methods Methods;
         
         public override void OnEnabled()
         {
             Singleton = this;
-            _eventHandlers = new EventHandlers();
-            JailbirdItem
+            Methods = new Methods();
+            
+            Config.Item.Register();
+            
             base.OnEnabled();
         }
         
         public override void OnDisabled()
         {
-            _eventHandlers = null;
+            Config.Item.Unregister();
+            
+            Methods = null;
             Singleton = null;
             
             base.OnDisabled();
