@@ -8,6 +8,7 @@ using Exiled.API.Features.Spawn;
 using Exiled.CustomItems.API.Features;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Permissions.Extensions;
+using UnityEngine;
 
 namespace BanHammer
 {
@@ -73,22 +74,29 @@ namespace BanHammer
                 int duration = 0;
                 string reason = "";
                 string nick = ev.Player.Nickname;
-                if (usePredefinedReasons)
+
+                if (Physics.Raycast(ev.Attacker.CameraTransform.position + Vector3.forward * 1.5f, ev.Attacker.CameraTransform.forward, out RaycastHit hit, 5f))
                 {
-                    KeyValuePair<long, string> preason = Plugin.Singleton.Config.PredefinedReasons.ElementAt(currentPredefinedReasonIndex);
-                    ev.Player.Ban((int)preason.Key, preason.Value);
+                    if(!hit.collider.TryGetComponent(out CharacterClassManager ccm))
+                        return;
+                    Player player = Player.Get(ccm.Hub);
+                    if (usePredefinedReasons)
+                    {
+                        KeyValuePair<long, string> preason = Plugin.Singleton.Config.PredefinedReasons.ElementAt(currentPredefinedReasonIndex);
+                        player.Ban((int)preason.Key, preason.Value);
                     
-                    duration = (int)preason.Key;
-                    reason = preason.Value;
-                }
-                else
-                {
-                    int d = (int)Plugin.Singleton.Config.BanDurations[currentCustomTimeIndex];
-                    string r = Plugin.Singleton.Methods.GetCustomReason(ev.Attacker);
-                    ev.Player.Ban(d, r);
+                        duration = (int)preason.Key;
+                        reason = preason.Value;
+                    }
+                    else
+                    {
+                        int d = (int)Plugin.Singleton.Config.BanDurations[currentCustomTimeIndex];
+                        string r = Plugin.Singleton.Methods.GetCustomReason(ev.Attacker);
+                        player.Ban(d, r);
                     
-                    duration = d;
-                    reason = r;
+                        duration = d;
+                        reason = r;
+                    }
                 }
                 
                 Map.Broadcast(Plugin.Singleton.Config.BroadcastDuration, Plugin.Singleton.Config.BanBroadcast
