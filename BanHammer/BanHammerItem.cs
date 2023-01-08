@@ -73,13 +73,14 @@ namespace BanHammer
             {
                 int duration = 0;
                 string reason = "";
-                string nick = ev.Player.Nickname;
+                string nick = "";
 
                 if (Physics.Raycast(ev.Attacker.CameraTransform.position + Vector3.forward * 1.5f, ev.Attacker.CameraTransform.forward, out RaycastHit hit, 5f))
                 {
                     if(!hit.collider.TryGetComponent(out CharacterClassManager ccm))
                         return;
                     Player player = Player.Get(ccm.Hub);
+                    nick = player.Nickname;
                     if (usePredefinedReasons)
                     {
                         KeyValuePair<long, string> preason = Plugin.Singleton.Config.PredefinedReasons.ElementAt(currentPredefinedReasonIndex);
